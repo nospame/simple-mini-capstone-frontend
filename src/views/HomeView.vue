@@ -5,7 +5,8 @@ export default {
     return {
       message: "Welcome to Vue.js!",
       products: [],
-      newProductParams: {}
+      newProductParams: {},
+      currentProduct: {}
     };
   },
   created: function () {
@@ -30,6 +31,11 @@ export default {
             this.products.push(response.data)
           },
         );
+    },
+    showProduct: function (product) {
+      this.currentProduct = product;
+      console.log(this.currentProduct);
+      document.querySelector("#product-details").showModal();
     }
   }
 };
@@ -49,9 +55,21 @@ export default {
     <button v-on:click="createProduct()">Create Product</button>
     <div v-for="product in products">
       {{ product.name }}, {{ product.formatted.price }}
+      <button
+        v-on:click="showProduct(product)"
+      >Show Info</button>
       <br />
       <img v-bind:src="product.image_url" />
     </div>
+    <dialog id="product-details">
+      <form method="dialog">
+        <h2>Product Info</h2>
+        <p>Name: {{ currentProduct.name }}</p>
+        <p>Description: {{ currentProduct.description }}</p>
+        <p>Price: ${{ currentProduct.price }}</p>
+        <button>Close</button>
+      </form>
+    </dialog>
   </div>
 </template>
 
