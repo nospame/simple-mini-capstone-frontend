@@ -6,7 +6,8 @@ export default {
       message: "Welcome to Vue.js!",
       products: [],
       newProductParams: {},
-      currentProduct: {}
+      currentProduct: {},
+      editProductParams: {}
     };
   },
   created: function () {
@@ -26,7 +27,7 @@ export default {
       axios.post('http://localhost:3000/products', this.newProductParams)
         .then(
           response => {
-            console.log(response);
+            console.log(response.data);
             this.newProductParams = {};
             this.products.push(response.data)
           },
@@ -34,8 +35,28 @@ export default {
     },
     showProduct: function (product) {
       this.currentProduct = product;
+      this.editProductParams = product;
       console.log(this.currentProduct);
       document.querySelector("#product-details").showModal();
+    },
+    updateProduct: function () {
+      axios.patch(`http://localhost:3000/products/${this.editProductParams.id}`, this.editProductParams)
+        .then(
+          response => {
+            console.log(response.data);
+          }
+        )
+    },
+    destroyProduct: function (product) {
+      axios.delete(`http://localhost:3000/products/${this.editProductParams.id}`)
+        .then(
+          response => {
+            console.log(response.data);
+            this.products.splice(
+              this.products.indexOf(product), 1
+            )
+          }
+        )
     }
   }
 };
@@ -54,19 +75,30 @@ export default {
     <br />
     <button v-on:click="createProduct()">Create Product</button>
     <div v-for="product in products">
-      {{ product.name }}, {{ product.formatted.price }}
-      <button
-        v-on:click="showProduct(product)"
-      >Show Info</button>
-      <br />
-      <img v-bind:src="product.image_url" />
+      <p>
+        <img v-bind:src="product.image_url" />
+        <br />
+        {{ product.name }}, {{ product.formatted.price }}
+        <button
+          v-on:click="showProduct(product)"
+        >Show Info</button>
+      </p>
     </div>
     <dialog id="product-details">
       <form method="dialog">
         <h2>Product Info</h2>
         <p>Name: {{ currentProduct.name }}</p>
         <p>Description: {{ currentProduct.description }}</p>
-        <p>Price: ${{ currentProduct.price }}</p>
+        <p>Price: ${{ currentProduct.price }}</p>Name:
+        <input v-model="editProductParams.name" />
+        <br />Description:
+        <input v-model="editProductParams.description" />
+        <br />Price:
+        <input v-model="editProductParams.price" />
+        <br />Image URL:
+        <input v-model="editProductParams.image_url" />
+        <button v-on:click="updateProduct()">Save Changes</button>
+        <button v-on:click="destroyProduct(currentProduct)">Delete Product</button>
         <button>Close</button>
       </form>
     </dialog>
