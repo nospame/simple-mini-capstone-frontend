@@ -74,14 +74,12 @@ export default {
     <input v-model="newProductParams.image_url" />
     <br />
     <button v-on:click="createProduct()">Create Product</button>
-    <div v-for="product in products">
+    <div v-for="product in products" v-bind:key="product.id">
       <p>
         <img v-bind:src="product.image_url" />
         <br />
-        {{ product.name }}, {{ product.formatted.price }}
-        <button
-          v-on:click="showProduct(product)"
-        >Show Info</button>
+        {{ product.name }}
+        <button v-on:click="showProduct(product)">Show Info</button>
       </p>
     </div>
     <dialog id="product-details">
@@ -89,14 +87,18 @@ export default {
         <h2>Product Info</h2>
         <p>Name: {{ currentProduct.name }}</p>
         <p>Description: {{ currentProduct.description }}</p>
-        <p>Price: ${{ currentProduct.price }}</p>Name:
-        <input v-model="editProductParams.name" />
-        <br />Description:
-        <input v-model="editProductParams.description" />
-        <br />Price:
-        <input v-model="editProductParams.price" />
-        <br />Image URL:
-        <input v-model="editProductParams.image_url" />
+        <p>Price: ${{ currentProduct.price }}</p>
+        <p>
+          Name:
+          <input v-model="editProductParams.name" />
+          <br />Description:
+          <input v-model="editProductParams.description" />
+          <br />Price:
+          <input v-model="editProductParams.price" />
+          <br />Image URL:
+          <input v-model="editProductParams.image_url" />
+          <br />
+        </p>
         <button v-on:click="updateProduct()">Save Changes</button>
         <button v-on:click="destroyProduct(currentProduct)">Delete Product</button>
         <button>Close</button>
